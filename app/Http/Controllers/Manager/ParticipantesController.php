@@ -134,6 +134,54 @@ class ParticipantesController extends Controller
             ], 404);
         }
 
+        $ranking = Usuario::query()
+            ->where([
+                'excluido' => NULL,
+                'funcao' => 'participante',
+            ])
+            ->with([
+                'participante' => function ($q) {
+                    $q->where('excluido', NULL)
+                    ->with(['pontos' => function ($query) {
+                        $query->where('excluido', NULL);
+                    }]);
+                }
+            ])
+            ->get()
+            ->map(function ($usuario) {
+                $pontos = $usuario->participante->pontos ?? collect();
+
+                $total = $pontos->sum(function ($ponto) {
+                    return $ponto->tipo === 'adicao'
+                        ? $ponto->quantidade
+                        : -$ponto->quantidade;
+                });
+
+                return [
+                    'id' => $usuario->id,
+                    'pontos' => $total,
+                ];
+            })
+            ->sortByDesc('pontos')
+            ->values();
+
+        $posicao = null;
+        $totalPontos = 0;
+
+        foreach ($ranking as $index => $item) {
+            if ($item['id'] == $participante->id) {
+                $posicao = $index + 1;
+                break;
+            }
+        }
+
+        $pontos = $participante->participante->pontos ?? collect();
+        $totalPontos = $pontos->sum(function ($ponto) {
+            return $ponto->tipo === 'adicao'
+                ? $ponto->quantidade
+                : -$ponto->quantidade;
+        });
+
         $etapas_cadastro = [
             'convidado' => 'Convite enviado',
             'concluido' => 'Concluído',
@@ -160,6 +208,8 @@ class ParticipantesController extends Controller
             'problema_saude_qual' => $participante->participante->problema_saude_qual,
             'etapa_cadastro' => $participante->participante->etapa_cadastro,
             'ativo' => $participante->ativo,
+            'posicao' => $posicao,
+            'total_pontos' => $totalPontos,
             'pontos' => $participante->participante->pontos->map(function ($ponto) {
                 return [
                     'id' => $ponto->id,

@@ -57,8 +57,8 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
         $router->get('/participantes/{id}', 'Manager\ParticipantesController@getParticipante');
         $router->post('/participantes/atualizar/{id}', 'Manager\ParticipantesController@updateParticipante');
         $router->delete('/participantes/excluir/{ids}', 'Manager\ParticipantesController@deleteParticipantes');
-        $router->post('/participantes/ativar/{id}', 'Manager\ParticipantesController@activeParticipantes');
-        $router->post('/participantes/desativar/{id}', 'Manager\ParticipantesController@deactiveParticipantes');
+        $router->post('/participantes/ativar/{ids}', 'Manager\ParticipantesController@activeParticipantes');
+        $router->post('/participantes/desativar/{ids}', 'Manager\ParticipantesController@deactiveParticipantes');
 
         $router->post('/participantes/pontos/novo/{id}/{tipo}', 'Manager\PontosController@createPonto');
         $router->post('/participantes/pontos/atualizar/{id}', 'Manager\PontosController@updatePonto');
