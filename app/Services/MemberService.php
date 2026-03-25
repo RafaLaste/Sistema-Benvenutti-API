@@ -33,7 +33,7 @@ class MemberService
                 'etapa_cadastro' => 'convidado',
             ]);
 
-            $this->sendConviteEmail($usuario->email, $usuario->nome ?? null, $usuario->token);
+            // $this->sendConviteEmail($usuario->email, $usuario->nome ?? null, $usuario->token);
 
             DB::commit();
 
