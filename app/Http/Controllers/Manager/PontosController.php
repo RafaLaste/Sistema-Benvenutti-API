@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Controllers\Controller;
 
 use App\Models\Usuario;
+use App\Models\Ponto;
 
 use App\Services\ScoreService;
 
