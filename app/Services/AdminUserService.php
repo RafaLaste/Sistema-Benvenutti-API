@@ -48,7 +48,7 @@ class AdminUserService
         try {
             $usuario = Usuario::query()
                 ->where([
-                    'email' => $id,
+                    'id' => $id,
                     'funcao' => 'administrador',
                     'excluido' => NULL
                 ])
