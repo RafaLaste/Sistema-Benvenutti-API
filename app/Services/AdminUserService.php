@@ -30,13 +30,13 @@ class AdminUserService
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return response()->json([
-                'message' => 'Ocorreu um erro!',
-                'errors' => [
-                    'general' => [$e->getMessage()]
-                ]
-            ], 500);
+            throw new \Exception('Ocorreu um erro ao realizar o cadastro: ' . $e->getMessage());
+            // return response()->json([
+            //     'message' => 'Ocorreu um erro!',
+            //     'errors' => [
+            //         'general' => [$e->getMessage()]
+            //     ]
+            // ], 500);
         }
     }
 
@@ -106,12 +106,14 @@ class AdminUserService
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return response()->json([
-                'message' => 'Ocorreu um erro ao excluir os registros!',
-                'errors' => [
-                    'general' => [$e->getMessage()],
-                ],
-            ], 500);
+            throw new \Exception('Ocorreu um erro ao excluir os registros: ' . $e->getMessage());
+
+            // return response()->json([
+            //     'message' => 'Ocorreu um erro ao excluir os registros!',
+            //     'errors' => [
+            //         'general' => [$e->getMessage()],
+            //     ],
+            // ], 500);
         }
     }
 }
