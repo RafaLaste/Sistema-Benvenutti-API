@@ -9,7 +9,7 @@ use App\Services\ImagemService;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 
-class FotoController extends Controller
+class FotosController extends Controller
 {
     protected $imagemService;
 
@@ -103,12 +103,12 @@ class FotoController extends Controller
         $this->validate($request, [
             'ordem' => 'nullable',
             'visivel' =>  'nullable|boolean',
-            'imagem' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'imagem' => 'required|image|mimes:jpeg,png,jpg|max:5120',
         ], [
             'imagem.required' => 'Por favor, insira uma imagem.',
             'imagem.image' => 'O arquivo deve ser uma imagem!',
             'imagem.mimes' => 'A imagem deve ser jpeg, png ou jpg!',
-            'imagem.max' => 'A imagem não pode ter mais de 2MB!',
+            'imagem.max' => 'A imagem não pode ter mais de 5MB!',
         ]);
 
         $dados = $request->only(['ordem', 'visivel', 'imagem']);

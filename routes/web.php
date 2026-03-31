@@ -76,20 +76,20 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
         });
 
         $router->group(['prefix' => '/galerias'], function () use ($router) {
-            $router->get('/', 'Manager\GaleriaController@getGalerias');
-            $router->get('/{id}', 'Manager\GaleriaController@getGaleria');
-            $router->post('/nova', 'Manager\GaleriaController@createGaleria');
-            $router->put('/atualizar/{id}', 'Manager\GaleriaController@updateGaleria');
-            $router->delete('/{id}', 'Manager\GaleriaController@deleteGaleria');
+            $router->get('/', 'Manager\GaleriasController@getGalerias');
+            $router->get('/{id}', 'Manager\GaleriasController@getGaleria');
+            $router->post('/nova', 'Manager\GaleriasController@createGaleria');
+            $router->put('/atualizar/{id}', 'Manager\GaleriasController@updateGaleria');
+            $router->delete('/{id}', 'Manager\GaleriasController@deleteGaleria');
 
-            $router->get('/{idGaleria}/fotos', 'Manager\FotoController@getFotos');
-            $router->post('/{idGaleria}/fotos/nova', 'Manager\FotoController@createFoto');
+            $router->get('/{idGaleria}/fotos', 'Manager\FotosController@getFotos');
+            $router->post('/{idGaleria}/fotos/nova', 'Manager\FotosController@createFoto');
 
-            $router->put('fotos/ordenar', 'Manager\FotoController@orderFoto');
-            $router->get('/fotos/{idFoto}', 'Manager\FotoController@getFoto');
-            $router->post('/fotos/atualizar/{idFoto}', 'Manager\FotoController@updateFoto');
-            $router->put('/fotos/visibilidade/{idFoto}', 'Manager\FotoController@visibleFoto');
-            $router->delete('/fotos/excluir/{idFoto}', 'Manager\FotoController@deleteFoto');
+            $router->put('fotos/ordenar', 'Manager\FotosController@orderFoto');
+            $router->get('/fotos/{idFoto}', 'Manager\FotosController@getFoto');
+            $router->post('/fotos/atualizar/{idFoto}', 'Manager\FotosController@updateFoto');
+            $router->put('/fotos/visibilidade/{idFoto}', 'Manager\FotosController@visibleFoto');
+            $router->delete('/fotos/excluir/{idFoto}', 'Manager\FotosController@deleteFoto');
         });
 
         $router->get('/usuarios', 'Manager\UsuariosController@getUsuarios');

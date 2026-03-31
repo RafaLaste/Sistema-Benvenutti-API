@@ -8,7 +8,7 @@ use App\Services\GaleriaService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
-class GaleriaController extends Controller
+class GaleriasController extends Controller
 {
     protected $galeriaService;
 
