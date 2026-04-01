@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Galeria;
+use App\Models\Edicao;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class GaleriaService
+class EdicaoService
 {
-    public function cadastrarGaleria($request)
+    public function cadastrarEdicao($request)
     {
         DB::beginTransaction();
 
         try {
-            $galeria = Galeria::create([
+            $edicao = Edicao::create([
                 'destino' => $request['destino'],
                 'ano' => $request['ano']
             ]);
@@ -21,10 +21,10 @@ class GaleriaService
             DB::commit();
 
             return [
-                'galeria' => [
-                    'id' => $galeria->id,
-                    'destino' => $galeria->destino,
-                    'ano' => $galeria->ano
+                'edicao' => [
+                    'id' => $edicao->id,
+                    'destino' => $edicao->destino,
+                    'ano' => $edicao->ano
                 ],
             ];
         } catch (\Exception $e) {
@@ -33,23 +33,23 @@ class GaleriaService
         }
     }
 
-    public function atualizarGaleria($request, $id)
+    public function atualizarEdicao($request, $id)
     {
         DB::beginTransaction();
 
         try {
-            $galeria = Galeria::query()
+            $edicao = Edicao::query()
                 ->where([
                     'excluido' => NULL,
                     'id' => $id,
                 ])
                 ->first();
 
-            if (!$galeria) {
-                throw new \Exception('Galeria não encontrado!');
+            if (!$edicao) {
+                throw new \Exception('Edicao não encontrado!');
             }
 
-            $galeria->update([
+            $edicao->update([
                 'destino' => $request['destino'],
                 'ano' => $request['ano']
             ]);
@@ -57,7 +57,7 @@ class GaleriaService
             DB::commit();
 
             return [
-                'galeria' => $galeria,
+                'edicao' => $edicao,
             ];
         } catch (\Exception $e) {
             DB::rollBack();
@@ -65,29 +65,29 @@ class GaleriaService
         }
     }
 
-    public function excluirGaleria($id)
+    public function excluirEdicao($id)
     {
         DB::beginTransaction();
 
         try {
-            $galeria = Galeria::query()
+            $edicao = Edicao::query()
                 ->where([
                     'excluido' => NULL,
                     'id' => $id,
                 ])
                 ->first();
 
-            if (!$galeria) {
-                throw new \Exception('Galeria não encontrada!');
+            if (!$edicao) {
+                throw new \Exception('Edicao não encontrada!');
             }
 
-            $galeria->excluido = Carbon::now();
-            $galeria->save();
+            $edicao->excluido = Carbon::now();
+            $edicao->save();
 
             DB::commit();
 
             return [
-                'galeria' => $galeria,
+                'edicao' => $edicao,
             ];
         } catch (\Exception $e) {
             DB::rollBack();

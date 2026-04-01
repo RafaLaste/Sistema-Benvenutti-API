@@ -17,7 +17,7 @@ class Foto extends Model
         'imagem',
         'ordem',
         'visivel',
-        'galeria_id'
+        'edicao_id'
     ];
 
     protected $guarded = ['id'];
@@ -25,8 +25,8 @@ class Foto extends Model
     const CREATED_AT = 'criado';
     const UPDATED_AT = 'modificado';
 
-    public function galeria()
+    public function edicao()
     {
-        return $this->belongsTo(Galeria::class);
+        return $this->belongsTo(Edicao::class);
     }
 }

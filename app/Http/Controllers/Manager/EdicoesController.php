@@ -3,64 +3,64 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
-use App\Models\Galeria;
-use App\Services\GaleriaService;
+use App\Models\Edicao;
+use App\Services\EdicaoService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
-class GaleriasController extends Controller
+class EdicoesController extends Controller
 {
-    protected $galeriaService;
+    protected $edicaoService;
 
-    public function __construct(GaleriaService $galeriaService)
+    public function __construct(EdicaoService $edicaoService)
     {
-        $this->galeriaService = $galeriaService;
+        $this->edicaoService = $edicaoService;
     }
 
-    public function getGalerias()
+    public function getEdicoes()
     {
-        $galeria = Galeria::query()
+        $edicao = Edicao::query()
             ->where([
                 'excluido' => NULL,
             ])
             ->orderBy('ano', 'DESC')
             ->orderBy('id', 'DESC')
             ->get()
-            ->map(function ($galeria) {
+            ->map(function ($edicao) {
                 return [
-                    'id' => $galeria->id,
-                    'nome' => $galeria->destino,
-                    'ano' => $galeria->ano
+                    'id' => $edicao->id,
+                    'nome' => $edicao->destino,
+                    'ano' => $edicao->ano
                 ];
             });
 
         return response()->json([
-            'galerias' => $galeria
+            'edicoes' => $edicao
 
         ]);
     }
 
-    public function getGaleria($id)
+    public function getEdicao($id)
     {
-        $galeria = Galeria::query()
+        $edicao = Edicao::query()
             ->where([
                 'id' => $id,
                 'excluido' => NULL,
             ])
             ->first();
 
-        $galeriaData = [
-            'id' => $galeria->id,
-            'destino' => $galeria->destino,
-            'ano' => $galeria->ano
+        $edicaoData = [
+            'id' => $edicao->id,
+            'destino' => $edicao->destino,
+            'ano' => $edicao->ano
         ];
 
         return response()->json([
-            'galeria' => $galeriaData
+            'edicao' => $edicaoData
         ]);
     }
 
-    public function createGaleria(Request $request)
+    public function createEdicao(Request $request)
     {
         $anoAtual = date('Y');
 
@@ -79,17 +79,17 @@ class GaleriasController extends Controller
         $dados = $request->only(['ano', 'destino']);
 
         try {
-            $response = $this->galeriaService->cadastrarGaleria($dados);
+            $response = $this->edicaoService->cadastrarEdicao($dados);
 
             return response()->json([
                 'success' => true,
                 'data' => $response,
-                'message' => 'Galeria criada com sucesso.'
+                'message' => 'Edicao criada com sucesso.'
             ], 201);
         } catch (QueryException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao criar galeria',
+                'message' => 'Erro ao criar edicao',
                 'error' => $e->getMessage(),
             ], 500);
         } catch (\Exception $e) {
@@ -101,7 +101,7 @@ class GaleriasController extends Controller
         }
     }
 
-    public function updateGaleria(Request $request, $id)
+    public function updateEdicao(Request $request, $id)
     {
         $anoAtual = date('Y');
 
@@ -120,17 +120,17 @@ class GaleriasController extends Controller
         $dados = $request->only(['ano', 'destino']);
 
         try {
-            $response = $this->galeriaService->atualizarGaleria($dados, $id);
+            $response = $this->edicaoService->atualizarEdicao($dados, $id);
 
             return response()->json([
                 'success' => true,
                 'data' => $response,
-                'message' => 'Galeria atualizada com sucesso.'
+                'message' => 'Edicao atualizada com sucesso.'
             ], 200);
         } catch (QueryException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao atualizar galeria',
+                'message' => 'Erro ao atualizar edicao',
                 'error' => $e->getMessage(),
             ], 500);
         } catch (\Exception $e) {
@@ -142,19 +142,19 @@ class GaleriasController extends Controller
         }
     }
 
-    public function deleteGaleria($id)
+    public function deleteEdicao($id)
     {
         try {
-            $this->galeriaService->excluirGaleria($id);
+            $this->edicaoService->excluirEdicao($id);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Galeria excluida com sucesso.'
+                'message' => 'Edicao excluida com sucesso.'
             ], 200);
         } catch (QueryException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao excluir galeria.',
+                'message' => 'Erro ao excluir edicao.',
                 'error' => $e->getMessage(),
             ], 500);
         } catch (\Exception $e) {

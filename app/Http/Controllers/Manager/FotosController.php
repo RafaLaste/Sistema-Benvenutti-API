@@ -18,11 +18,11 @@ class FotosController extends Controller
         $this->imagemService = $imagemService;
     }
 
-    public function getFotos($idGaleria)
+    public function getFotos($idEdicao)
     {
         $foto = Foto::query()
             ->where([
-                'galeria_id' => $idGaleria,
+                'edicao_id' => $idEdicao,
                 'excluido' => NULL,
             ])
             ->orderBy('ordem', 'ASC')
@@ -34,7 +34,7 @@ class FotosController extends Controller
                     'img' => config('services.site_storage') . '/media/content/editions/thumbs/imagem/' . $foto->imagem,
                     'ordem' => $foto->ordem,
                     'visivel' => $foto->visivel ? true : false,
-                    'galeria_id' => $foto->galeria_id
+                    'edicao_id' => $foto->edicao_id
                 ];
             });
 
@@ -56,7 +56,7 @@ class FotosController extends Controller
             'img' => config('services.site_storage') . '/media/content/editions/thumbs/imagem/' . $foto->imagem,
             'ordem' => $foto->ordem,
             'visivel' => $foto->visivel,
-            'galeria_id' => $foto->galeria_id
+            'edicao_id' => $foto->edicao_id
         ];
 
         return response()->json([
@@ -64,11 +64,9 @@ class FotosController extends Controller
         ]);
     }
 
-    public function createFoto(Request $request, $idGaleria)
+    public function createFoto(Request $request, $idEdicao)
     {
         $this->validate($request, [
-            'ordem' => 'nullable',
-            'visivel' =>  'nullable|boolean',
             'imagem' => 'required|image|mimes:jpeg,png,jpg|max:5120',
         ], [
             'imagem.required' => 'Por favor, insira uma imagem.',
@@ -78,52 +76,16 @@ class FotosController extends Controller
         ]);
 
 
-        $dados = $request->only(['ordem', 'visivel']);
         $imagem = $request->file('imagem');
 
         try {
-            $response = $this->imagemService->cadastrarFoto($dados, $imagem, $idGaleria);
+            $response = $this->imagemService->cadastrarFoto($imagem, $idEdicao);
 
             return response()->json([
                 'success' => true,
                 'data' => $response,
                 'message' => 'Foto criada com sucesso.'
             ], 201);
-        } catch (QueryException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao criar foto',
-                'error' => $e->getMessage(),
-            ], 500);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro inesperado ao processar a solicitação.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function updateFoto(Request $request, $idFoto)
-    {
-        $this->validate($request, [
-            'imagem' => 'image|mimes:jpeg,png,jpg|max:5120',
-        ], [
-            'imagem.image' => 'O arquivo deve ser uma imagem!',
-            'imagem.mimes' => 'A imagem deve ser jpeg, png ou jpg!',
-            'imagem.max' => 'A imagem não pode ter mais de 5MB!',
-        ]);
-
-        $imagem = $request->file('imagem');
-
-        try {
-            $response = $this->imagemService->atualizarFoto($imagem, $idFoto);
-
-            return response()->json([
-                'success' => true,
-                'data' => $response,
-                'message' => 'Foto atualizada com sucesso.'
-            ], 200);
         } catch (QueryException $e) {
             return response()->json([
                 'success' => false,

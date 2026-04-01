@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Galeria extends Model
+class Edicao extends Model
 {
-    protected $table = 'galeria';
+    protected $table = 'edicao';
 
     /**
      * The attributes that are mass assignable.
