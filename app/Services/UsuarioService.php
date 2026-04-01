@@ -5,7 +5,7 @@ namespace App\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class UserService
+class UsuarioService
 {
     public function atualizarCadastro($usuario, $dadosUsuario, $dadosParticipante)
     {
