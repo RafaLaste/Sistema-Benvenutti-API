@@ -8,7 +8,7 @@ use App\Models\Participante;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class ScoreService
+class PontoService
 {
     public function novoPonto($dadosPonto, $participanteId, $tipo)
     {
