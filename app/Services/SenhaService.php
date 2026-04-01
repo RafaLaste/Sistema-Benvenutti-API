@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Usuario;
 use App\Models\Token;
 
-class PasswordService
+class SenhaService
 {
     public function solicitarSenha($dadosUsuario)
     {
@@ -42,13 +42,13 @@ class PasswordService
             $data['email'] = $usuario['email'];
             $data['token'] = $tokenString;
 
-            Mail::send('emails.password', $data, function($message)use($data) {
+            Mail::send('emails.password', $data, function ($message) use ($data) {
                 $message->from('naoresponda@todeschini.viaggiotur.com.br', 'Todeschini')
-                        ->to($data['email'])
-                        ->bcc('rafael@8poroito.com.br')
-                        ->subject('Você solicitou uma recuperação de senha.');
+                    ->to($data['email'])
+                    ->bcc('rafael@8poroito.com.br')
+                    ->subject('Você solicitou uma recuperação de senha.');
             });
-            
+
             DB::commit();
 
             return [
