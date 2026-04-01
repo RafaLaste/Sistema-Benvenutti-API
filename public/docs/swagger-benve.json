@@ -544,6 +544,41 @@
             }
         },
 
+        "/manager/edicoes/ordenar": {
+            "put": {
+                "tags": ["Edicoes"],
+                "summary": "Atualizar ordem das edições",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": ["id", "ordem"],
+                                    "properties": {
+                                        "id": { "type": "integer" },
+                                        "ordem": { "type": "integer" }
+                                    }
+                                }
+                            },
+                            "example": [
+                                { "id": 1, "ordem": 1 },
+                                { "id": 2, "ordem": 2 }
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ordem atualizada com sucesso"
+                    }
+                }
+            }
+        },
+
         "/manager/edicoes/excluir/{id}": {
             "delete": {
                 "tags": ["Edicoes"],
