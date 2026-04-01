@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
-use App\Services\StepsService;
+use App\Services\CadastroService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 
 class CadastroController extends Controller
 {
-    protected $stepsService;
+    protected $cadastroService;
 
-    public function __construct(StepsService $stepsService)
+    public function __construct(CadastroService $cadastroService)
     {
-        $this->stepsService = $stepsService;
+        $this->cadastroService = $cadastroService;
     }
 
     public function getUsuario($token)
@@ -90,7 +90,7 @@ class CadastroController extends Controller
             'limitacao_qual.max' => 'A limitação deve ter no máximo 72 caracteres.',
             'medicamento.required' => 'Por favor, informe se há medicamento.',
             'medicamento.boolean' => 'Valor inválido para medicamento, atualize a página.',
-            'medicamento_qual.max' => 'O medicamento deve ter no máximo 72 caracteres.', //Criar validacao para dosagem
+            'medicamento_qual.max' => 'O medicamento deve ter no máximo 72 caracteres.',
             'medicamento_dosagem.max' => 'A dosagem do medicamento deve ter no máximo 24 caracteres.',
             'problema_saude.required' => 'Por favor, informe se há problema de saúde.',
             'problema_saude.boolean' => 'Valor inválido para problema de saúde, atualize a página.',
@@ -112,7 +112,7 @@ class CadastroController extends Controller
         $dadosParticipante = $request->only(['cpf', 'data_nascimento', 'rg', 'data_expedicao_rg', 'fone_celular', 'fone_emergencia', 'restricao_alimentar', 'restricao_alimentar_qual', 'limitacao', 'limitacao_qual', 'medicamento', 'medicamento_qual', 'medicamento_dosagem', 'problema_saude', 'problema_saude_qual']);
 
         try {
-            $response = $this->stepsService->completarCadastro($usuario, $dadosUsuario, $dadosParticipante);
+            $response = $this->cadastroService->completarCadastro($usuario, $dadosUsuario, $dadosParticipante);
 
             return response()->json([
                 'success' => true,
