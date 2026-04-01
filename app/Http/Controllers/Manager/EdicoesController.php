@@ -29,8 +29,7 @@ class EdicoesController extends Controller
             ->map(function ($edicao) {
                 return [
                     'id' => $edicao->id,
-                    'nome' => $edicao->destino,
-                    'ano' => $edicao->ano
+                    'nome' => $edicao->destino . '-' . $edicao->ano,
                 ];
             });
 
