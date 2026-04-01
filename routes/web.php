@@ -78,13 +78,13 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
         $router->group(['prefix' => '/edicoes'], function () use ($router) {
             $router->get('/', 'Manager\EdicoesController@getEdicoes');
             $router->get('/{id}', 'Manager\EdicoesController@getEdicao');
-            $router->post('/nova', 'Manager\EdicoesController@createEdicao');
+            $router->post('/novo', 'Manager\EdicoesController@createEdicao');
             $router->put('/atualizar/{id}', 'Manager\EdicoesController@updateEdicao');
             $router->put('/visibilidade/{id}', 'Manager\EdicoesController@visibleEdicao');
             $router->delete('/excluir/{id}', 'Manager\EdicoesController@deleteEdicao');
 
             $router->get('/{idEdicao}/fotos', 'Manager\FotosController@getFotos');
-            $router->post('/{idEdicao}/fotos/nova', 'Manager\FotosController@createFoto');
+            $router->post('/{idEdicao}/fotos/novo', 'Manager\FotosController@createFoto');
 
             $router->put('fotos/ordenar', 'Manager\FotosController@orderFoto');
             $router->get('/fotos/{idFoto}', 'Manager\FotosController@getFoto');
