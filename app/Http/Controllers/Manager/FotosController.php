@@ -20,82 +20,48 @@ class FotosController extends Controller
 
     public function getFotos($idGaleria)
     {
-        try {
-            $foto = Foto::where([
+        $foto = Foto::query()
+            ->where([
                 'galeria_id' => $idGaleria,
                 'excluido' => NULL,
             ])
-                ->orderBy('ordem', 'ASC')
-                ->get();
+            ->orderBy('ordem', 'ASC')
+            ->orderBy('id', 'DESC')
+            ->get()
+            ->map(function ($foto) {
+                return [
+                    'id' => $foto->id,
+                    'img' => config('services.site_storage') . '/media/content/editions/thumbs/imagem/' . $foto->imagem,
+                    'ordem' => $foto->ordem,
+                    'visivel' => $foto->visivel ? true : false,
+                    'galeria_id' => $foto->galeria_id
+                ];
+            });
 
-            if ($foto->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Fotos não encontradas'
-                ], 404);
-            }
-
-            return response()->json([
-                'fotos' => $foto->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'imagem' => $item->imagem,
-                        'ordem' => $item->ordem,
-                        'visivel' => $item->visivel,
-                        'galeria_id' => $item->galeria_id
-                    ];
-                })
-            ]);
-        } catch (QueryException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao buscar fotos',
-                'error' => $e->getMessage(),
-            ], 500);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro inesperado ao processar a solicitação.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'fotos' => $foto
+        ]);
     }
 
     public function getFoto($idFoto)
     {
-        try {
-            $foto = Foto::where([
+        $foto = Foto::query()
+            ->where([
                 'id' => $idFoto,
                 'excluido' => NULL,
             ])->first();
 
-            if (!$foto) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Foto não encontrada'
-                ], 404);
-            }
+        $fotoData = [
+            'id' => $foto->id,
+            'img' => config('services.site_storage') . '/media/content/editions/thumbs/imagem/' . $foto->imagem,
+            'ordem' => $foto->ordem,
+            'visivel' => $foto->visivel,
+            'galeria_id' => $foto->galeria_id
+        ];
 
-            return response()->json([
-                'id' => $foto->id,
-                'imagem' => $foto->imagem,
-                'ordem' => $foto->ordem,
-                'visivel' => $foto->visivel,
-                'galeria_id' => $foto->galeria_id
-            ]);
-        } catch (QueryException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao buscar foto',
-                'error' => $e->getMessage(),
-            ], 500);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro inesperado ao processar a solicitação.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'foto' => $fotoData
+        ]);
     }
 
     public function createFoto(Request $request, $idGaleria)
@@ -111,10 +77,12 @@ class FotosController extends Controller
             'imagem.max' => 'A imagem não pode ter mais de 5MB!',
         ]);
 
-        $dados = $request->only(['ordem', 'visivel', 'imagem']);
+
+        $dados = $request->only(['ordem', 'visivel']);
+        $imagem = $request->file('imagem');
 
         try {
-            $response = $this->imagemService->cadastrarFoto($dados, $idGaleria);
+            $response = $this->imagemService->cadastrarFoto($dados, $imagem, $idGaleria);
 
             return response()->json([
                 'success' => true,
@@ -139,19 +107,17 @@ class FotosController extends Controller
     public function updateFoto(Request $request, $idFoto)
     {
         $this->validate($request, [
-            'ordem' => 'nullable',
-            'visivel' =>  'nullable|boolean',
-            'imagem' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'imagem' => 'image|mimes:jpeg,png,jpg|max:5120',
         ], [
             'imagem.image' => 'O arquivo deve ser uma imagem!',
             'imagem.mimes' => 'A imagem deve ser jpeg, png ou jpg!',
-            'imagem.max' => 'A imagem não pode ter mais de 2MB!',
+            'imagem.max' => 'A imagem não pode ter mais de 5MB!',
         ]);
 
-        $dados = $request->only(['ordem', 'visivel', 'imagem']);
+        $imagem = $request->file('imagem');
 
         try {
-            $response = $this->imagemService->atualizarFoto($dados, $idFoto);
+            $response = $this->imagemService->atualizarFoto($imagem, $idFoto);
 
             return response()->json([
                 'success' => true,
