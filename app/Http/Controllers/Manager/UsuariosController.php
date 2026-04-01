@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 
-use App\Services\AdminUserService;
+use App\Services\AdminUsuarioService;
 
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -15,14 +15,15 @@ use Carbon\Carbon;
 
 class UsuariosController extends Controller
 {
-    protected $adminUserService;
+    protected $adminUsuarioService;
 
-    public function __construct(AdminUserService $adminUserService)
+    public function __construct(AdminUsuarioService $adminUsuarioService)
     {
-        $this->adminUserService = $adminUserService;
+        $this->adminUsuarioService = $adminUsuarioService;
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required',
@@ -48,7 +49,7 @@ class UsuariosController extends Controller
                 'excluido' => NULL
             ])
             ->first();
-            
+
         if (!$usuario || !$usuario->ativo || !$usuario->isAdmin()) {
             return response()->json(['error' => 'unauthorized_user'], 403);
         }
@@ -63,7 +64,8 @@ class UsuariosController extends Controller
         ]);
     }
 
-    public function getUsuario($id = NULL) {
+    public function getUsuario($id = NULL)
+    {
         if ($id) {
             $usuario = Usuario::query()
                 ->where([
@@ -95,7 +97,8 @@ class UsuariosController extends Controller
         }
     }
 
-    public function getUsuarios() {
+    public function getUsuarios()
+    {
         $usuarios = Usuario::query()
             ->where([
                 'excluido' => NULL,
@@ -117,12 +120,14 @@ class UsuariosController extends Controller
         ]);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         auth()->logout();
         return response()->json(['message' => 'Logout realizado com sucesso.']);
     }
 
-    public function createUsuario(Request $request) {
+    public function createUsuario(Request $request)
+    {
         $this->validate($request, [
             'nome' => 'required|string|max:255',
             'email' => 'required|email|unique:usuarios,email|max:255',
@@ -144,7 +149,7 @@ class UsuariosController extends Controller
         $dadosUsuario = $request->only(['nome', 'email', 'password', 'ativo']);
 
         try {
-            $response = $this->adminUserService->cadastrarUsuario($dadosUsuario);
+            $response = $this->adminUsuarioService->cadastrarUsuario($dadosUsuario);
 
             return response()->json([
                 'success' => true,
@@ -166,7 +171,8 @@ class UsuariosController extends Controller
         }
     }
 
-    public function updateUsuario(Request $request, $id) {
+    public function updateUsuario(Request $request, $id)
+    {
         $usuario = Usuario::query()
             ->where([
                 'id' => $id,
@@ -205,7 +211,7 @@ class UsuariosController extends Controller
         $dadosUsuario = $request->only(['nome', 'email', 'password', 'ativo']);
 
         try {
-            $response = $this->adminUserService->atualizarUsuario($dadosUsuario, $id);
+            $response = $this->adminUsuarioService->atualizarUsuario($dadosUsuario, $id);
 
             return response()->json([
                 'success' => true,
@@ -232,7 +238,7 @@ class UsuariosController extends Controller
         $explodeIds = explode(',', $ids);
 
         try {
-            $response = $this->adminUserService->excluirUsuarios($explodeIds);
+            $response = $this->adminUsuarioService->excluirUsuarios($explodeIds);
 
             return response()->json([
                 'success' => true,
