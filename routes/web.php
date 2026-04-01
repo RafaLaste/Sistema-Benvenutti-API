@@ -75,19 +75,18 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
             $router->get('/participantes/documentos/export', 'Manager\RelatoriosController@exportParticipantesDocs');
         });
 
-        $router->group(['prefix' => '/galerias'], function () use ($router) {
-            $router->get('/', 'Manager\GaleriasController@getGalerias');
-            $router->get('/{id}', 'Manager\GaleriasController@getGaleria');
-            $router->post('/nova', 'Manager\GaleriasController@createGaleria');
-            $router->put('/atualizar/{id}', 'Manager\GaleriasController@updateGaleria');
-            $router->delete('/{id}', 'Manager\GaleriasController@deleteGaleria');
+        $router->group(['prefix' => '/edicoes'], function () use ($router) {
+            $router->get('/', 'Manager\EdicoesController@getEdicoes');
+            $router->get('/{id}', 'Manager\EdicoesController@getEdicao');
+            $router->post('/nova', 'Manager\EdicoesController@createEdicao');
+            $router->put('/atualizar/{id}', 'Manager\EdicoesController@updateEdicao');
+            $router->delete('/excluir/{id}', 'Manager\EdicoesController@deleteEdicao');
 
-            $router->get('/{idGaleria}/fotos', 'Manager\FotosController@getFotos');
-            $router->post('/{idGaleria}/fotos/nova', 'Manager\FotosController@createFoto');
+            $router->get('/{idEdicao}/fotos', 'Manager\FotosController@getFotos');
+            $router->post('/{idEdicao}/fotos/nova', 'Manager\FotosController@createFoto');
 
             $router->put('fotos/ordenar', 'Manager\FotosController@orderFoto');
             $router->get('/fotos/{idFoto}', 'Manager\FotosController@getFoto');
-            $router->post('/fotos/atualizar/{idFoto}', 'Manager\FotosController@updateFoto');
             $router->put('/fotos/visibilidade/{idFoto}', 'Manager\FotosController@visibleFoto');
             $router->delete('/fotos/excluir/{idFoto}', 'Manager\FotosController@deleteFoto');
         });
