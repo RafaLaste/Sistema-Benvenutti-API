@@ -6,7 +6,7 @@ use App\Models\Programa;
 
 use Illuminate\Support\Facades\DB;
 
-class ProgramService
+class ProgramaService
 {
     public function atualizarDados($dadosPrograma)
     {
@@ -14,7 +14,7 @@ class ProgramService
 
         try {
             $programa = Programa::where('excluido', NULL)->first();
-            
+
             if (!$programa) {
                 throw new \Exception('Dados originais não encontrados');
             }
@@ -31,7 +31,6 @@ class ProgramService
             return [
                 'programa' => $programa
             ];
-            
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception('Erro ao atualizar os dados: ' . $e->getMessage());
