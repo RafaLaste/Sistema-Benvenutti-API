@@ -7,14 +7,23 @@ use App\Models\Galeria;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+use App\Services\ImagemCompressorService;
+
 class ImagemService
 {
-    public function cadastrarFoto($request, $idGaleria)
+    protected $compressor;
+
+    public function __construct(ImagemCompressorService $compressor)
+    {
+        $this->compressor = $compressor;
+    }
+
+    public function cadastrarFoto($request, $arquivo, $idGaleria)
     {
         DB::beginTransaction();
 
         try {
-            $imagem = md5(uniqid(rand(), true)) . '.' . strtolower($request['imagem']->extension());
+            $imagem = md5(uniqid(rand(), true)) . '.' . strtolower($arquivo->extension());
 
             $galeria = Galeria::query()
                 ->where([
@@ -46,16 +55,10 @@ class ImagemService
 
             DB::commit();
 
-            $request['imagem']->move(base_path('../intranet-media/uploads/slides/d/'), $imagem);
+            $this->compressor->compactarOuReverter($arquivo->getRealPath(), base_path('../media/content/editions/thumbs/imagem/' . $imagem));
 
             return [
-                'fotos' => [
-                    'id' => $foto->id,
-                    'imagem' => $foto->imagem,
-                    'ordem' => $foto->ordem,
-                    'visivel' => $foto->visivel,
-                    'galeria_id' => $idGaleria
-                ]
+                'foto' => $foto
             ];
         } catch (\Exception $e) {
             DB::rollBack();
@@ -63,7 +66,7 @@ class ImagemService
         }
     }
 
-    public function atualizarFoto($request, $idFoto)
+    public function atualizarFoto($arquivo, $idFoto)
     {
         DB::beginTransaction();
 
@@ -79,24 +82,17 @@ class ImagemService
                 throw new \Exception('Foto não encontrada!');
             }
 
-            $dadosUpdate = [
-                'visivel' => $request['visivel'] ?? $foto->visivel,
-                'ordem' => $request['ordem'] ?? $foto->ordem,
-            ];
+            $imagem = md5(uniqid(rand(), true)) . '.' . strtolower($arquivo->extension());
 
-            if (!empty($request['imagem'])) {
-                $imagem = md5(uniqid(rand(), true)) . '.' . strtolower($request['imagem']->extension());
-
-                $request['imagem']->move(base_path('../intranet-media/uploads/slides/d/'), $imagem);
-
-                $dadosUpdate['imagem'] = $imagem;
-            }
-
-            $foto->update($dadosUpdate);
+            $foto->update(['imagem' => $imagem]);
 
             DB::commit();
 
-            return $foto;
+            $this->compressor->compactarOuReverter($arquivo->getRealPath(), base_path('../media/content/editions/thumbs/imagem/' . $imagem));
+
+            return [
+                'foto' => $foto
+            ];
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
