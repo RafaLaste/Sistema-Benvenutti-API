@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
-class MemberService
+class ParticipanteService
 {
     public function convidarParticipante($dadosConvidado)
     {
@@ -218,9 +218,9 @@ class MemberService
 
         Mail::send('emails.register', $data, function ($message) use ($data) {
             $message->from('naoresponda@benvenuttionline.com.br', 'Móveis Benvenutti')
-                    ->to($data['email'])
-                    ->bcc('rafael@8poroito.com.br')
-                    ->subject('Você foi convidado para o sistema de pontuações Benvenutti.');
+                ->to($data['email'])
+                ->bcc('rafael@8poroito.com.br')
+                ->subject('Você foi convidado para o sistema de pontuações Benvenutti.');
         });
     }
 }
