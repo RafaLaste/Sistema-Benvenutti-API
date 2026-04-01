@@ -7,21 +7,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Usuario;
 use App\Models\Ponto;
 
-use App\Services\ScoreService;
+use App\Services\PontoService;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class PontosController extends Controller
 {
-    protected $scoreService;
+    protected $pontoService;
 
-    public function __construct(ScoreService $scoreService)
+    public function __construct(PontoService $pontoService)
     {
-        $this->scoreService = $scoreService;
+        $this->pontoService = $pontoService;
     }
 
-    public function createPonto(Request $request, $id, $tipo) {
+    public function createPonto(Request $request, $id, $tipo)
+    {
         $this->validate($request, [
             'quantidade' => 'required|numeric|min:0|max:2000000',
             'descricao' => 'nullable'
@@ -35,7 +36,7 @@ class PontosController extends Controller
         $dadosPonto = $request->only(['quantidade', 'descricao']);
 
         try {
-            $response = $this->scoreService->novoPonto($dadosPonto, $id, $tipo);
+            $response = $this->pontoService->novoPonto($dadosPonto, $id, $tipo);
 
             return response()->json([
                 'success' => true,
@@ -57,7 +58,8 @@ class PontosController extends Controller
         }
     }
 
-    public function updatePonto(Request $request, $id) {
+    public function updatePonto(Request $request, $id)
+    {
         $ponto = Ponto::query()
             ->where([
                 'id' => $id,
@@ -70,7 +72,7 @@ class PontosController extends Controller
                 'error' => 'Pontuação não encontrada.'
             ], 404);
         }
-        
+
         $this->validate($request, [
             'quantidade' => 'required|numeric|min:0|max:2000000',
             'descricao' => 'nullable'
@@ -84,7 +86,7 @@ class PontosController extends Controller
         $dadosPonto = $request->only(['quantidade', 'descricao']);
 
         try {
-            $response = $this->scoreService->atualizarPonto($dadosPonto, $id);
+            $response = $this->pontoService->atualizarPonto($dadosPonto, $id);
 
             return response()->json([
                 'success' => true,
@@ -111,7 +113,7 @@ class PontosController extends Controller
         $explodeIds = explode(',', $ids);
 
         try {
-            $response = $this->scoreService->excluirPontos($explodeIds);
+            $response = $this->pontoService->excluirPontos($explodeIds);
 
             return response()->json([
                 'success' => true,
