@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Foto;
-use App\Models\Galeria;
+use App\Models\Edicao;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -18,27 +18,27 @@ class ImagemService
         $this->compressor = $compressor;
     }
 
-    public function cadastrarFoto($request, $arquivo, $idGaleria)
+    public function cadastrarFoto($arquivo, $idEdicao)
     {
         DB::beginTransaction();
 
         try {
             $imagem = md5(uniqid(rand(), true)) . '.' . strtolower($arquivo->extension());
 
-            $galeria = Galeria::query()
+            $edicao = Edicao::query()
                 ->where([
-                    'id' => $idGaleria,
+                    'id' => $idEdicao,
                     'excluido' => NULL,
                 ])
                 ->first();
 
-            if (!$galeria) {
-                throw new \Exception('Galeria não encontrado.');
+            if (!$edicao) {
+                throw new \Exception('Edicao não encontrado.');
             }
 
             $ultimaOrdem = Foto::query()
                 ->where([
-                    'galeria_id' => $idGaleria,
+                    'edicao_id' => $idEdicao,
                     'excluido' => NULL,
                 ])
                 ->max('ordem');
@@ -47,44 +47,11 @@ class ImagemService
             $ordem = $ultimaOrdem ? $ultimaOrdem + 1 : 1;
 
             $foto = Foto::create([
-                'ordem' => $request['ordem'] ?? $ordem,
-                'visivel' => $request['visivel'] ?? true,
+                'ordem' => $ordem,
+                'visivel' => true,
                 'imagem' => $imagem,
-                'galeria_id' => $idGaleria
+                'edicao_id' => $idEdicao
             ]);
-
-            DB::commit();
-
-            $this->compressor->compactarOuReverter($arquivo->getRealPath(), base_path('../media/content/editions/thumbs/imagem/' . $imagem));
-
-            return [
-                'foto' => $foto
-            ];
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw new \Exception($e->getMessage());
-        }
-    }
-
-    public function atualizarFoto($arquivo, $idFoto)
-    {
-        DB::beginTransaction();
-
-        try {
-            $foto = Foto::query()
-                ->where([
-                    'excluido' => NULL,
-                    'id' => $idFoto,
-                ])
-                ->first();
-
-            if (!$foto) {
-                throw new \Exception('Foto não encontrada!');
-            }
-
-            $imagem = md5(uniqid(rand(), true)) . '.' . strtolower($arquivo->extension());
-
-            $foto->update(['imagem' => $imagem]);
 
             DB::commit();
 
