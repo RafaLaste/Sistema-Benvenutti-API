@@ -17,6 +17,7 @@ class Edicao extends Model
         'destino',
         'ano',
         'visivel',
+        'ordem',
     ];
 
     protected $guarded = ['id'];
