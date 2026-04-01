@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 
-use App\Services\ProgramService;
+use App\Services\ProgramaService;
 
 use App\Models\Participante;
 use App\Models\Destino;
@@ -13,14 +13,15 @@ use Carbon\Carbon;
 
 class ProgramaController extends Controller
 {
-    protected $programService;
+    protected $programaService;
 
-    public function __construct(ProgramService $programService)
+    public function __construct(ProgramaService $programaService)
     {
-        $this->programService = $programService;
+        $this->programaService = $programaService;
     }
 
-    public function getStats() {
+    public function getStats()
+    {
         $participantesTotal = Participante::query()
             ->where([
                 'excluido' => NULL
@@ -68,15 +69,17 @@ class ProgramaController extends Controller
         ]);
     }
 
-    public function getData() {
+    public function getData()
+    {
         $programa = Programa::where('excluido', NULL)->first();
-        
+
         return response()->json([
             'programa' => $programa
         ]);
     }
 
-    public function postData(Request $request) {
+    public function postData(Request $request)
+    {
         $this->validate($request, [
             'nome_site' => 'required|string|max:255',
             'email_contato' => 'required|email:max:255',
@@ -93,7 +96,7 @@ class ProgramaController extends Controller
         ]);
 
         try {
-            $response = $this->programService->atualizarDados($request->all());
+            $response = $this->programaService->atualizarDados($request->all());
 
             return response()->json([
                 'success' => true,
