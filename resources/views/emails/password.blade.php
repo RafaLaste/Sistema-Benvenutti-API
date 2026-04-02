@@ -105,7 +105,7 @@
                                     <table border="0" align="center" cellpadding="0" cellspacing="0" role="presentation" width="100%" style="width:100%;max-width:100%;">
                                         <tr>
                                             <td align="center" class="container-padding">
-                                                <a href="{{ env('SITE_URL') }}"><img style="width:180px;border:0px;display: inline!important;" src="{{ env('SITE_URL') }}/assets/img/todeschini-logo.png" width="180" border="0" alt="Todeschini"></a>
+                                                <a href="{{ config('services.site.url') }}"><img style="width:180px;border:0px;display: inline!important;" src="{{ config('services.site.url') }}/assets/img/todeschini-logo.png" width="180" border="0" alt="Todeschini"></a>
                                             </td>
                                         </tr>
                                     </table>
@@ -133,7 +133,7 @@
                                     <div style="color: #fff">
                                         Para alterar sua senha, acesse o link abaixo:
                                     </div>
-                                    <a style="text-decoration: underline; color: #fff" href="{{ env('SITE_URL') }}/alterar-senha/{{ $token }}">{{ env('SITE_URL') }}/alterar-senha/{{ $token }}</a>
+                                    <a style="text-decoration: underline; color: #fff" href="{{ config('services.site.url') }}/alterar-senha/{{ $token }}">{{ config('services.site.url') }}/alterar-senha/{{ $token }}</a>
                                 </td>
                             </tr>
                             <tr>
@@ -187,7 +187,7 @@
                                                     <tr>
                                                         <td width="10" style="width: 10px;"></td>
                                                         <td align="center">
-                                                            <p style="margin:0px;padding:0px;color:#1D1D1D;font-style:normal;font-size:11px;font-family:'Inter',Helvetica,Arial,sans-serif;font-weight:400;line-height:17px;text-decoration:none;text-transform:none;display:block;text-align:-webkit-center;text-align:center;">Você está recebendo este conteúdo, pois seu e-mail está cadastrado no site <a href="{{ env('SITE_URL') }}" target="_blank" style="font-weight:bold;margin:0px;border-top-width:0px;border-right-width:0px;border-left-width:0px;border-bottom-width:0px;border-style:none;border-bottom-style:none;padding:0px;float:none;color:#1D1D1D;font-style:normal;font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;line-height:17px;text-transform:none;display:inline;white-space:normal;text-decoration:underline;">{{ env('SITE_URL') }}</a>.</p>
+                                                            <p style="margin:0px;padding:0px;color:#1D1D1D;font-style:normal;font-size:11px;font-family:'Inter',Helvetica,Arial,sans-serif;font-weight:400;line-height:17px;text-decoration:none;text-transform:none;display:block;text-align:-webkit-center;text-align:center;">Você está recebendo este conteúdo, pois seu e-mail está cadastrado no site <a href="{{ config('services.site.url') }}" target="_blank" style="font-weight:bold;margin:0px;border-top-width:0px;border-right-width:0px;border-left-width:0px;border-bottom-width:0px;border-style:none;border-bottom-style:none;padding:0px;float:none;color:#1D1D1D;font-style:normal;font-family:'Inter',Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;line-height:17px;text-transform:none;display:inline;white-space:normal;text-decoration:underline;">{{ config('services.site.url') }}</a>.</p>
                                                         </td>
                                                     </tr>
                                                 </table>
