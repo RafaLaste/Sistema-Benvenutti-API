@@ -559,7 +559,7 @@
                                     "type": "object",
                                     "required": ["id", "ordem"],
                                     "properties": {
-                                        "ordem": {
+                                        "odr": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
@@ -747,7 +747,7 @@
                                     "type": "object",
                                     "required": ["id", "ordem"],
                                     "properties": {
-                                        "ordem": {
+                                        "odr": {
                                             "type": "array",
                                             "items": {
                                                 "type": "object",
