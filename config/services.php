@@ -5,5 +5,8 @@ return [
         'key' => env('TINIFY_API_KEY'),
     ],
 
-    'site_storage' => env('SITE_STORAGE'),
+    'site' => [
+        'url' => env('SITE_URL'),
+        'storage' => env('SITE_STORAGE'),
+    ],
 ];
