@@ -55,7 +55,7 @@ class ImagemService
 
             DB::commit();
 
-            $this->compressor->compactarOuReverter($arquivo->getRealPath(), base_path('../media/content/editions/thumbs/imagem/' . $imagem));
+            $this->compressor->compactarOuReverter($arquivo->getRealPath(), base_path('../media/content/editions/thumbs/' . $imagem));
 
             return [
                 'foto' => [

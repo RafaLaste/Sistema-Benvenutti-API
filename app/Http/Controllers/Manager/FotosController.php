@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
+use App\Models\Edicao;
 use App\Models\Foto;
 use App\Services\ImagemService;
 
@@ -20,27 +21,35 @@ class FotosController extends Controller
 
     public function getFotos($idEdicao)
     {
-        $foto = Foto::query()
+        $edicao = Edicao::query()
             ->where([
-                'edicao_id' => $idEdicao,
-                'excluido' => NULL,
+                'id' => $idEdicao,
+                'excluido' => NULL
             ])
-            ->orderBy('ordem', 'ASC')
-            ->orderBy('id', 'DESC')
-            ->get()
-            ->map(function ($foto) {
+            ->with([
+                'fotos' => function ($q) {
+                    $q->where('excluido', NULL)
+                        ->orderBy('ordem', 'ASC')
+                        ->orderBy('id', 'DESC');
+                }
+            ])
+            ->first();
+
+        $edicaoData = [
+            'id' => $edicao->id,
+            'nome' => $edicao->nome,
+            'fotos' => $edicao->fotos->map(function ($foto) {
                 return [
                     'id' => $foto->id,
-                    'imagem' => config('services.site_storage') . '/media/content/editions/thumbs/imagem/' . $foto->imagem,
+                    'imagem' => config('services.site_storage') . '/media/content/editions/thumbs/' . $foto->imagem,
                     'ordem' => $foto->ordem,
-                    'visivel' => $foto->visivel ? true : false,
-                    'edicao_id' => $foto->edicao_id
+                    'visivel' => (bool) $foto->visivel,
+                    'edicao_id' => $foto->edicao_id,
                 ];
-            });
+            })->values()->all(),
+        ];
 
-        return response()->json([
-            'fotos' => $foto
-        ]);
+        return response()->json($edicaoData);
     }
 
     public function getFoto($idFoto)
@@ -59,7 +68,7 @@ class FotosController extends Controller
 
         $fotoData = [
             'id' => $foto->id,
-            'imagem' => config('services.site_storage') . '/media/content/editions/thumbs/imagem/' . $foto->imagem,
+            'imagem' => config('services.site_storage') . '/media/content/editions/thumbs/' . $foto->imagem,
             'ordem' => $foto->ordem,
             'visivel' => $foto->visivel ? true : false,
             'edicao_id' => $foto->edicao_id
