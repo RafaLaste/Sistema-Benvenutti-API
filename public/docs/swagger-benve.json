@@ -39,6 +39,31 @@
                 }
             },
 
+            "SlideItem": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "imagem": { "type": "string", "format": "uri" },
+                    "imagem_mobile": { "type": "string", "format": "uri" },
+                    "titulo": { "type": "string" },
+                    "visivel": { "type": "boolean" },
+                    "ordem": { "type": "integer" }
+                }
+            },
+
+            "SlideDetalhe": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer" },
+                    "imagem": { "type": "string", "format": "uri" },
+                    "imagem_mobile": { "type": "string", "format": "uri" },
+                    "titulo": { "type": "string" },
+                    "descricao": { "type": "string" },
+                    "visivel": { "type": "boolean" },
+                    "ordem": { "type": "integer" }
+                }
+            },
+
             "FotoItem": {
                 "type": "object",
                 "properties": {
@@ -258,6 +283,46 @@
                     "email": { "type": "string" },
                     "password": { "type": "string" },
                     "ativo": { "type": "boolean" }
+                }
+            },
+
+            "ProgramaItem": {
+                "type": "object",
+                "properties": {
+                    "titulo": { "type": "string" },
+                    "descricao": { "type": "string" },
+                    "data_inicio": { "type": "string", "format": "date-time" },
+                    "data_final": { "type": "string", "format": "date-time" },
+                    "regulamento": { "type": "string", "format": "uri" }
+                }
+            },
+
+            "ProgramaStats": {
+                "type": "object",
+                "properties": {
+                    "ranking_top_10": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": { "type": "string" },
+                                "nome": { "type": "string" },
+                                "pontos": { "type": "integer" },
+                                "posicao": { "type": "integer" }
+                            }
+                        }
+                    },
+                    "cadastros_semana_atual": { "type": "integer" },
+                    "cadastros_nao_finalizados": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "tipo": { "type": "string" },
+                                "total": { "type": "integer" }
+                            }
+                        }
+                    }
                 }
             },
 
@@ -580,7 +645,7 @@
                                 }
                             },
                             "example": {
-                                "ordem": [
+                                "odr": [
                                     { "id": 3, "ordem": 0 },
                                     { "id": 6, "ordem": 1 }
                                 ]
@@ -768,7 +833,7 @@
                                 }
                             },
                             "example": {
-                                "ordem": [
+                                "odr": [
                                     { "id": 3, "ordem": 0 },
                                     { "id": 6, "ordem": 1 }
                                 ]
@@ -835,6 +900,265 @@
                 "responses": {
                     "200": {
                         "description": "Foto excluída com sucesso"
+                    }
+                }
+            }
+        },
+
+        "/manager/slides": {
+            "get": {
+                "tags": ["Slides"],
+                "summary": "Listar slides",
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Lista de slides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "slides": {
+                                            "$ref": "#/components/schemas/SlideItem"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/manager/slides/{id}": {
+            "get": {
+                "tags": ["Slides"],
+                "summary": "Detalhar slide",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalhe da foto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "slide": {
+                                            "$ref": "#/components/schemas/SlideDetalhe"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/manager/slides/novo": {
+            "post": {
+                "tags": ["Slides"],
+                "summary": "Criar slide",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "imagem",
+                                    "imagem_mobile",
+                                    "titulo",
+                                    "descricao"
+                                ],
+                                "properties": {
+                                    "imagem": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "imagem_mobile": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "titulo": {
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Slide criado com sucesso"
+                    }
+                }
+            }
+        },
+
+        "/manager/slides/atualizar/{id}": {
+            "post": {
+                "tags": ["Slides"],
+                "summary": "Atualizar slide",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["titulo", "descricao"],
+                                "properties": {
+                                    "imagem": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "imagem_mobile": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "titulo": {
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Slide atualizado com sucesso"
+                    }
+                }
+            }
+        },
+
+        "/manager/slides/ordenar": {
+            "put": {
+                "tags": ["Slides"],
+                "summary": "Atualizar ordem dos slides",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": ["id", "ordem"],
+                                    "properties": {
+                                        "odr": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["id", "ordem"],
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "ordem": {
+                                                        "type": "integer",
+                                                        "example": 0
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "example": {
+                                "odr": [
+                                    { "id": 3, "ordem": 0 },
+                                    { "id": 6, "ordem": 1 }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ordem atualizada com sucesso"
+                    }
+                }
+            }
+        },
+
+        "/manager/slides/visibilidade/{id}": {
+            "put": {
+                "tags": ["Slides"],
+                "summary": "Atualizar visibilidade do slide",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["visivel"],
+                                "properties": {
+                                    "visivel": { "type": "boolean" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Visibilidade atualizada com sucesso"
+                    }
+                }
+            }
+        },
+
+        "/manager/slides/excluir/{id}": {
+            "delete": {
+                "tags": ["Slides"],
+                "summary": "Excluir slide",
+                "security": [{ "bearerAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Slide excluído com sucesso"
                     }
                 }
             }
@@ -1192,6 +1516,103 @@
                 ],
                 "responses": {
                     "200": { "description": "Excluídos" }
+                }
+            }
+        },
+
+        "/manager/stats": {
+            "get": {
+                "tags": ["Programa"],
+                "summary": "Listar stats do programa",
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Lista dos stats do programa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProgramaStats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/manager/data": {
+            "get": {
+                "tags": ["Programa"],
+                "summary": "Listar informações do programa",
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Lista das informações do programa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "programa": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProgramaItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/manager/data/novo": {
+            "post": {
+                "tags": ["Programa"],
+                "summary": "Criar programa",
+                "security": [{ "bearerAuth": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "titulo",
+                                    "descricao",
+                                    "data_inicio",
+                                    "data_final"
+                                ],
+                                "properties": {
+                                    "titulo": {
+                                        "type": "string"
+                                    },
+                                    "descricao": {
+                                        "type": "string"
+                                    },
+                                    "data_inicio": {
+                                        "type": "string",
+                                        "example": "07-04-2026 11:50"
+                                    },
+                                    "data_final": {
+                                        "type": "string",
+                                        "example": "07-04-2026 11:55"
+                                    },
+                                    "arq": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cadastro atualizado com sucesso."
+                    }
                 }
             }
         },
