@@ -1686,6 +1686,37 @@
                     }
                 }
             }
+        },
+
+        "/painel/programa": {
+            "get": {
+                "tags": ["Painel"],
+                "summary": "Listar as informações do programa",
+                "security": [{ "bearerAuth": [] }],
+                "responses": {
+                    "200": {
+                        "description": "Lista com informações do programa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "programa": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProgramaItem"
+                                            }
+                                        },
+                                        "cadastros_ativos": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
