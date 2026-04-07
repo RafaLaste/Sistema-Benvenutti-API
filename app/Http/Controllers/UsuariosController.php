@@ -121,6 +121,7 @@ class UsuariosController extends Controller
         });
 
         $formattedUsuario = [
+            'id' => $participanteAutenticado->id,
             'nome' => $participanteAutenticado->nome ?? '',
             'total_pontos' => $totalPontos ?? '',
             'posicao' => $posicao ?? '',
