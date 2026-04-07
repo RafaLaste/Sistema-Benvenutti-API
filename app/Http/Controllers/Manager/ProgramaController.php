@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Services\ProgramaService;
 
 use App\Models\Participante;
-use App\Models\Destino;
-
+use App\Models\Programa;
+use App\Models\Usuario;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class ProgramaController extends Controller
 {
@@ -22,81 +24,131 @@ class ProgramaController extends Controller
 
     public function getStats()
     {
-        $participantesTotal = Participante::query()
+        $ranking = Usuario::query()
             ->where([
-                'excluido' => NULL
+                'excluido' => NULL,
+                'funcao' => 'participante',
+            ])
+            ->with([
+                'participante' => function ($q) {
+                    $q->where('excluido', NULL)
+                        ->with(['pontos' => function ($query) {
+                            $query->where('excluido', NULL);
+                        }]);
+                },
+                'logs' => function ($q) {
+                    $q->latest('criado')
+                        ->take(1);
+                },
+            ])
+            ->get()
+            ->map(function ($usuario) {
+                $pontos = $usuario->participante->pontos ?? collect();
+
+                $totalPontos = $pontos->sum(function ($ponto) {
+                    return $ponto->tipo === 'adicao'
+                        ? $ponto->quantidade
+                        : -$ponto->quantidade;
+                });
+
+                return [
+                    'id' => $usuario->id,
+                    'nome' => $usuario->nome,
+                    'pontos' => $totalPontos,
+                ];
+            })
+            ->sortByDesc('pontos')
+            ->take(10)
+            ->values()
+            ->map(function ($usuario, $index) {
+                $usuario['posicao'] = $index + 1;
+                return $usuario;
+            });
+
+        $participantesCadastradosNaSemana = Participante::query()
+            ->whereBetween('criado', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
             ])
             ->count();
 
-        $participantesCompletosTotal = Participante::query()
+
+        $participantesCadastroFinalizado = Participante::query()
             ->where([
-                'excluido' => NULL,
                 'etapa_cadastro' => 'concluido'
             ])
             ->count();
 
-        $participantesConfirmadosTotal = Participante::query()
+        $participantesCadastroNaoFinalizado = Participante::query()
             ->where([
-                'excluido' => NULL,
-                'confirmado' => true
+                'etapa_cadastro' => 'convidado'
             ])
             ->count();
 
-        $destinosParticipantes = Destino::query()
-            ->where([
-                'excluido' => NULL,
-                'ano_vigente' => Carbon::now()->year
-            ])
-            ->withCount(['participantes' => function ($q) {
-                $q->where([
-                    'excluido' => NULL
-                ]);
-            }])
-            ->get()
-            ->map(function ($destino) {
-                return [
-                    'id' => $destino->id,
-                    'destino' => $destino->destino,
-                    'participantes_count' => $destino->participantes_count,
-                ];
-            });
-
         return response()->json([
-            'participantesTotal' => $participantesTotal,
-            'participantesCompletosTotal' => $participantesCompletosTotal,
-            'participantesConfirmadosTotal' => $participantesConfirmadosTotal,
-            'destinosParticipantes' => $destinosParticipantes
+            'ranking_top_10' => $ranking,
+            'cadastros_semana_atual' => $participantesCadastradosNaSemana,
+            'cadastros_nao_finalizados' => [
+                ['tipo' => 'Não Finalizados', 'total' => $participantesCadastroNaoFinalizado],
+                ['tipo' => 'Finalizados', 'total' => $participantesCadastroFinalizado]
+            ]
         ]);
     }
 
     public function getData()
     {
-        $programa = Programa::where('excluido', NULL)->first();
+        $programa = Programa::where('id', 1)->first();
+
+        if (!$programa) {
+            return response()->json([
+                'error' => 'Programa não encontrado.'
+            ], 404);
+        }
 
         return response()->json([
-            'programa' => $programa
+            'programa' => [
+                'titulo' => $programa->titulo,
+                'descricao' => $programa->descricao,
+                'data_inicio' => $programa->data_inicio,
+                'data_final' => $programa->data_final,
+                'regulamento' => $programa->regulamento
+                    ? config('services.site.storage') . '/content/files/' . $programa->regulamento
+                    : null,
+            ]
         ]);
     }
 
     public function postData(Request $request)
     {
         $this->validate($request, [
-            'nome_site' => 'required|string|max:255',
-            'email_contato' => 'required|email:max:255',
-            'telefone' => 'required|string|max:255',
-            'cadastros_ativos' => 'boolean',
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required|string|max:255',
+            'data_inicio' => 'required|date_format:d-m-Y H:i',
+            'data_final' => 'required|date_format:d-m-Y H:i|after:data_inicio',
+            'arq' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ], [
-            'nome_site.required' => 'Por favor, informe o nome do programa.',
-            'email_contato.required' => 'Por favor, informe o e-mail de contato do programa.',
-            'email_contato.email' => 'Por favor, informe um e-mail válido.',
-            'telefone.required' => 'Por favor, informe o telefone de contato.',
-            'telefone.required' => 'Por favor, informe seu telefone.',
-            'telefone.celular_com_ddd' => 'Por favor, informe um telefone válido.',
-            'mensagem.required' => 'Por favor, informe sua mensagem.',
+            'titulo.required' => 'Por favor, informe o titulo do programa.',
+            'titulo.string' => 'Valor inválido para o titulo.',
+            'titulo.max' => 'O título deve ter no máximo 255 caracteres',
+            'descricao.required' => 'Por favor, informe o descrição do programa.',
+            'descricao.string' => 'Valor inválido para a descrição.',
+            'descricao.max' => 'A descrição deve ter no máximo 255 caracteres',
+            'data_inicio.required' => 'Por favor, informe a data de inicio do programa',
+            'data_inicio.date_format' => 'O formato da data inicial é inválido',
+            'data_final.required' => 'Por favor, informe a data do final do programa',
+            'data_final.date_format' => 'O formato da data final é inválido',
+            'data_final.after' => 'A data final precisa ser após a data inicial',
+            'arq.file' => 'Valor inválido para o arquivo',
+            'arq.mimes' => 'Os formatos aceitos para o arquivo são PDF, DOC e DOCX.',
+            'arq.max' => 'O tamanho máximo de upload é 10MB.',
         ]);
 
+        $dados = $request->only('titulo', 'descricao', 'data_inicio', 'data_final');
+
+        $arquivo = $request->file('arq');
+
         try {
-            $response = $this->programaService->atualizarDados($request->all());
+            $response = $this->programaService->cadastrarDados($dados, $arquivo);
 
             return response()->json([
                 'success' => true,
