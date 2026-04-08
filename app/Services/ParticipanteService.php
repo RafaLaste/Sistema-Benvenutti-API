@@ -133,6 +133,15 @@ class ParticipanteService
                     'excluido' => Carbon::now(),
                 ]);
 
+            Participante::query()
+                ->where([
+                    'excluido' => NULL,
+                ])
+                ->whereIn('usuario_id', $ids)
+                ->update([
+                    'excluido' => Carbon::now(),
+                ]);
+
             if ($response === 0) {
                 throw new \Exception('Nenhum registro encontrado para exclusão.');
             }
