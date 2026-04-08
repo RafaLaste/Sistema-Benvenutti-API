@@ -75,12 +75,14 @@ class ProgramaController extends Controller
 
         $participantesCadastroFinalizado = Participante::query()
             ->where([
+                'excluido' => NULL,
                 'etapa_cadastro' => 'concluido'
             ])
             ->count();
 
         $participantesCadastroNaoFinalizado = Participante::query()
             ->where([
+                'excluido' => NULL,
                 'etapa_cadastro' => 'convidado'
             ])
             ->count();
