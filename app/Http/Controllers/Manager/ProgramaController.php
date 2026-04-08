@@ -66,6 +66,7 @@ class ProgramaController extends Controller
             });
 
         $participantesCadastradosNaSemana = Participante::query()
+            ->whereNull('excluido')
             ->whereBetween('criado', [
                 Carbon::now()->startOfWeek(),
                 Carbon::now()->endOfWeek()
