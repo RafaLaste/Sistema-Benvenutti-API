@@ -129,8 +129,8 @@ class ProgramaController extends Controller
         $this->validate($request, [
             'titulo' => 'required|string|max:255',
             'descricao' => 'required|string|max:255',
-            'data_inicio' => 'required|date_format:d-m-Y H:i',
-            'data_final' => 'required|date_format:d-m-Y H:i|after:data_inicio',
+            'data_inicio' => 'required|date_format:Y-m-d H:i:s',
+            'data_final' => 'required|date_format:Y-m-d H:i:s|after:data_inicio',
             'arq' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ], [
             'titulo.required' => 'Por favor, informe o titulo do programa.',
