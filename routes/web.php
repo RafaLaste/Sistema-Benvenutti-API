@@ -53,9 +53,11 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
     $router->group(['middleware' => 'admin'], function () use ($router) {
         $router->get('/usuario', 'Manager\UsuariosController@getUsuario');
 
-        $router->get('/stats', 'Manager\ProgramaController@getStats');
-        $router->get('/data', 'Manager\ProgramaController@getData');
-        $router->post('/data/novo', 'Manager\ProgramaController@postData');
+        $router->group(['prefix' => '/programa'], function () use ($router) {
+            $router->get('/stats', 'Manager\ProgramaController@getStats');
+            $router->get('/', 'Manager\ProgramaController@getData');
+            $router->post('/atualizar', 'Manager\ProgramaController@postData');
+        });
 
         $router->get('/participantes', 'Manager\ParticipantesController@getParticipantes');
         $router->post('/participantes/convidar', 'Manager\ParticipantesController@inviteParticipante');
