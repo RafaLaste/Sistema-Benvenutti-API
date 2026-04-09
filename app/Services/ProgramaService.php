@@ -20,6 +20,7 @@ class ProgramaService
                     'descricao' => $dados['descricao'],
                     'data_inicio' => Carbon::createFromFormat('Y-m-d H:i:s', $dados['data_inicio']),
                     'data_final' => Carbon::createFromFormat('Y-m-d H:i:s', $dados['data_final']),
+                    'regulamento' => null
                 ]
             );
 
@@ -41,7 +42,7 @@ class ProgramaService
                     'descricao' => $programa->descricao,
                     'data_inicio' => $programa->data_inicio,
                     'data_final' => $programa->data_final,
-                    'regulamento' => config('services.site.storage') . '/content/files/' . $programa->regulamento
+                    'regulamento' =>  $programa->regulamento ? config('services.site.storage') . '/content/files/' . $programa->regulamento : null
                 ]
             ];
         } catch (\Exception $e) {
