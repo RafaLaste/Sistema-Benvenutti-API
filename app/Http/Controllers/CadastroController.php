@@ -102,7 +102,7 @@ class CadastroController extends Controller
             'email.email' => 'Por favor, informe um e-mail válido.',
             'email.unique' => 'Este e-mail já está registrado no programa.',
             'password.required' => 'Por favor, informe sua senha.',
-            'password.min' => 'A senha deve ter no mínimo 6 caracteres.',
+            'password.min' => 'A senha deve ter no mínimo 8 caracteres.',
             'password.confirmed' => 'As senhas não conferem.',
             'password_confirmation.required' => 'Por favor, confirme sua senha.',
             'cpf.required' => 'Por favor, informe seu CPF.',
