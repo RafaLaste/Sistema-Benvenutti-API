@@ -42,7 +42,7 @@ class RankingController extends Controller
 
                 return [
                     'id' => $usuario->id,
-                    'nome' => $usuario->nome,
+                    'nome' => $usuario->nome ?? $usuario->email,
                     'pontos' => $totalPontos,
                     'isCurrent' => $isCurrent
                 ];
