@@ -166,7 +166,7 @@ class CadastroController extends Controller
         $this->validate($request, [
             'rg' => 'required|string|max:20',
             'data_expedicao_rg' => 'required|date_format:Y-m-d|before_or_equal:today',
-            'cpf' => 'required|cpf|unique:cadastros_participantes,cpf,' . $participanteId,
+            'cpf' => 'required|cpf|unique:cadastros_participantes,cpf,' . $participanteId . ',id,excluido,NULL',
             'data_nascimento' => 'required|date_format:Y-m-d|before_or_equal:today',
             'fone_celular' => 'required|celular_com_ddd',
             'fone_emergencia' => 'required|celular_com_ddd',
@@ -180,7 +180,7 @@ class CadastroController extends Controller
             'problema_saude' => 'required|boolean',
             'problema_saude_qual' => 'nullable|max:72',
             'nome' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:usuarios,email,' . $usuario->id,
+            'email' => 'required|email|max:255|unique:usuarios,email,' . $usuario->id . ',id,excluido,NULL',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
         ], [

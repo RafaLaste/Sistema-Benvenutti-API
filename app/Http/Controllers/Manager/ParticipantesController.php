@@ -85,7 +85,7 @@ class ParticipantesController extends Controller
     {
         $this->validate($request, [
             'nome' => 'nullable',
-            'email' => 'required|email|unique:usuarios,email|max:255',
+            'email' => 'required|email|unique:usuarios,email,NULL,id,excluido,NULL|max:255',
         ], [
             'email.required' => 'Por favor, informe seu e-mail.',
             'email.email' => 'Por favor, informe um e-mail válido.',
