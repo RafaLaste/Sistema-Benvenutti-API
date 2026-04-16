@@ -20,7 +20,9 @@ class Programa extends Model
         'descricao',
         'data_inicio',
         'data_final',
-        'regulamento'
+        'regulamento',
+        'regulamento_arquivo',
+        'termo_adesao'
     ];
 
     protected $guarded = ['id'];
