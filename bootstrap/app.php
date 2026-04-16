@@ -131,6 +131,7 @@ $app->register(LaravelLegends\PtBrValidator\ValidatorProvider::class);
 $app->register(\Anik\Form\FormRequestServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 
+$app->register(\Barryvdh\DomPDF\ServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
