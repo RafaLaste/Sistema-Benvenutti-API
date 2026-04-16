@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 
 class ProgramaController extends Controller
 {
-    public function index()
+    public function __invoke()
     {
         $programa = Programa::first();
 
@@ -35,50 +35,6 @@ class ProgramaController extends Controller
                     : null,
             ],
             'cadastros_ativos' => $cadastrosAtivos
-        ]);
-    }
-
-    public function getRegulamento()
-    {
-        $programa = Programa::first();
-
-        if (!$programa || empty($programa->regulamento)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Regulamento não encontrado.'
-            ], 404);
-        }
-
-        return response()->json([
-            'regulamento' => $programa->regulamento,
-        ]);
-    }
-
-    public function getTermoAdesao()
-    {
-        $programa = Programa::first();
-
-        if (!$programa || empty($programa->termo_adesao)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Termo de adesão não encontrado.'
-            ], 404);
-        }
-
-        $usuario   = Auth::user();
-        $participante = $usuario->participante;
-
-        $map = [
-            '--nome_do_participante--' => $usuario->nome,
-            '--cpf_do_participante--'  => $participante->cpf ?? '',
-            '--email--'                => $usuario->email,
-            '--fone_celular--'         => $participante->fone_celular ?? '',
-        ];
-
-        $htmlFinal = str_replace(array_keys($map), array_values($map), $programa->termo_adesao);
-
-        return response()->json([
-            'termo_adesao' => $htmlFinal,
         ]);
     }
 }
