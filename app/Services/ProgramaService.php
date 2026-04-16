@@ -3,12 +3,20 @@
 namespace App\Services;
 
 use App\Models\Programa;
+use App\Services\PdfGeradorService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ProgramaService
 {
-    public function cadastrarDados($dados, $arquivo)
+    protected $pdfGeradorService;
+
+    public function __construct(PdfGeradorService $pdfGeradorService)
+    {
+        $this->pdfGeradorService = $pdfGeradorService;
+    }
+
+    public function cadastrarDados($dados)
     {
         DB::beginTransaction();
 
@@ -20,18 +28,22 @@ class ProgramaService
                     'descricao' => $dados['descricao'],
                     'data_inicio' => Carbon::createFromFormat('Y-m-d H:i:s', $dados['data_inicio']),
                     'data_final' => Carbon::createFromFormat('Y-m-d H:i:s', $dados['data_final']),
-                    'regulamento' => null
+                    'regulamento' => $dados['regulamento'],
+                    'termo_adesao' => $dados['termo_adesao'],
                 ]
             );
 
-            if ($arquivo) {
-                $regulamento = md5(uniqid(rand(), true)) . '.' . strtolower($arquivo->extension());
-                $arquivo->move(base_path('../media/content/files/'), $regulamento);
+            $regulamentoPdf = $this->pdfGeradorService->gerar('pdf.regulamento', $dados['regulamento'], $dados['titulo'])->output();
 
-                $programa->update([
-                    'regulamento' => $regulamento,
-                ]);
-            }
+
+            $nomeArquivo = md5(uniqid(rand(), true)) . '.pdf';
+            $caminho = base_path('../media/content/files/' . $nomeArquivo);
+
+            file_put_contents($caminho, $regulamentoPdf);
+
+            $programa->update([
+                'regulamento_arquivo' => $nomeArquivo,
+            ]);
 
             DB::commit();
 
@@ -42,7 +54,7 @@ class ProgramaService
                     'descricao' => $programa->descricao,
                     'data_inicio' => $programa->data_inicio,
                     'data_final' => $programa->data_final,
-                    'regulamento' =>  $programa->regulamento ? config('services.site.storage') . '/content/files/' . $programa->regulamento : null
+                    'regulamento' =>  $programa->regulamento_arquivo ? config('services.site.storage') . '/content/files/' . $programa->regulamento_arquivo : null
                 ]
             ];
         } catch (\Exception $e) {
