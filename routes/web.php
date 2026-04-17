@@ -80,13 +80,7 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
         $router->post('/participantes/pontos/atualizar/{id}', 'Manager\PontosController@updatePonto');
         $router->delete('/participantes/pontos/{ids}', 'Manager\PontosController@deletePontos');
 
-        $router->group(['prefix' => '/relatorios'], function () use ($router) {
-            $router->get('/participantes/geral', 'Manager\RelatoriosController@getParticipantes');
-            $router->get('/participantes/export', 'Manager\RelatoriosController@exportParticipantes');
-
-            $router->get('/participantes/documentos', 'Manager\RelatoriosController@getParticipantesDocs');
-            $router->get('/participantes/documentos/export', 'Manager\RelatoriosController@exportParticipantesDocs');
-        });
+        $router->get('/relatorio/participantes', 'Manager\RelatoriosController');
 
         $router->group(['prefix' => '/edicoes'], function () use ($router) {
             $router->get('/', 'Manager\EdicoesController@getEdicoes');
