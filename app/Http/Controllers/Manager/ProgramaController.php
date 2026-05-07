@@ -178,10 +178,11 @@ class ProgramaController extends Controller
     public function resetarPrograma()
     {
         try {
-            $this->programaService->resetarPrograma();
+            $response = $this->programaService->resetarPrograma();
             return response()->json([
                 'success' => true,
                 'message' => 'Programa resetado com sucesso.',
+                'data'    => $response
             ], 201);
         } catch (\Exception $e) {
             return response()->json([

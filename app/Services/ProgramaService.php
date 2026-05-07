@@ -83,6 +83,8 @@ class ProgramaService
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             DB::table('pontos')->truncate();
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+            return true;
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception('Erro ao resetar o programa: ' . $e->getMessage());
