@@ -30,9 +30,6 @@ class ProgramaController extends Controller
                 'descricao' => $programa->descricao,
                 'data_inicio' => $programa->data_inicio,
                 'data_final' => $programa->data_final,
-                'regulamento' => $programa->regulamento
-                    ? config('services.site.storage') . '/content/files/' . $programa->regulamento
-                    : null,
             ],
             'cadastros_ativos' => $cadastrosAtivos
         ]);
