@@ -21,7 +21,7 @@ $router->get('/', function () use ($router) {
 //     return 'APP_KEY=base64:'. base64_encode(\Illuminate\Support\Str::random(32));
 // });
 
-$router->get('/programa/data', 'ProgramaController@getData');
+$router->get('/programa/data', 'ProgramaController');
 
 $router->post('/login', 'UsuariosController@login');
 $router->post('/logout', 'UsuariosController@logout');
