@@ -8,6 +8,9 @@ use App\Services\PdfGeradorService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 class ProgramaService
 {
     protected $pdfGeradorService;
@@ -100,21 +103,23 @@ class ProgramaService
         $arquivoSql = 'backup_' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
         $caminho = base_path('../media/backup/' . $arquivoSql);
 
-        $comando = sprintf(
-            'mysqldump --host=%s --port=%s --user=%s --password=%s %s > %s 2>&1',
-            escapeshellarg($host),
-            escapeshellarg($port),
-            escapeshellarg($username),
-            escapeshellarg($password),
-            escapeshellarg($database),
-            escapeshellarg($caminho)
-        );
+        $process = new Process([
+            'mysqldump',
+            '--host=' . $host,
+            '--port=' . $port,
+            '--user=' . $username,
+            '--password=' . $password,
+            $database,
+        ]);
 
-        \exec($comando, $output, $resultCode);
+        $process->setTimeout(300);
+        $process->run();
 
-        if ($resultCode !== 0) {
-            throw new \Exception('Erro ao gerar o backup: ' . implode("\n", $output));
+        if (!$process->isSuccessful()) {
+            throw new \Exception('Erro ao gerar o backup: ' . $process->getErrorOutput());
         }
+
+        file_put_contents($caminho, $process->getOutput());
 
         return $arquivoSql;
     }
