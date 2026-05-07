@@ -8,9 +8,6 @@ use App\Services\PdfGeradorService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-
 class ProgramaService
 {
     protected $pdfGeradorService;
@@ -94,32 +91,40 @@ class ProgramaService
 
     private function backupBancoDados()
     {
-        $database = config('database.connections.mysql.database');
-        $username = config('database.connections.mysql.username');
-        $password = config('database.connections.mysql.password');
-        $host     = config('database.connections.mysql.host');
-        $port     = config('database.connections.mysql.port', 3306);
-
         $arquivoSql = 'backup_' . Carbon::now()->format('Y-m-d_H-i-s') . '.sql';
         $caminho = base_path('../media/backup/' . $arquivoSql);
 
-        $process = new Process([
-            'mysqldump',
-            '--host=' . $host,
-            '--port=' . $port,
-            '--user=' . $username,
-            '--password=' . $password,
-            $database,
-        ]);
+        $pdo = DB::connection()->getPdo();
+        $sql = '';
 
-        $process->setTimeout(300);
-        $process->run();
+        $tabelas = DB::select('SHOW TABLES');
+        $keyTabela = 'Tables_in_' . config('database.connections.mysql.database');
 
-        if (!$process->isSuccessful()) {
-            throw new \Exception('Erro ao gerar o backup: ' . $process->getErrorOutput());
+        foreach ($tabelas as $tabela) {
+            $nomeTabela = $tabela->$keyTabela;
+
+            $createTable = DB::select("SHOW CREATE TABLE `{$nomeTabela}`");
+            $sql .= "\n\nDROP TABLE IF EXISTS `{$nomeTabela}`;\n";
+            $sql .= $createTable[0]->{'Create Table'} . ";\n";
+
+            $linhas = DB::table($nomeTabela)->get();
+
+            if ($linhas->isEmpty()) continue;
+
+            $sql .= "\nINSERT INTO `{$nomeTabela}` VALUES\n";
+
+            $valores = $linhas->map(function ($linha) use ($pdo) {
+                $campos = array_map(function ($valor) use ($pdo) {
+                    return is_null($valor) ? 'NULL' : $pdo->quote($valor);
+                }, (array) $linha);
+
+                return '(' . implode(', ', $campos) . ')';
+            });
+
+            $sql .= $valores->implode(",\n") . ";\n";
         }
 
-        file_put_contents($caminho, $process->getOutput());
+        file_put_contents($caminho, $sql);
 
         return $arquivoSql;
     }
