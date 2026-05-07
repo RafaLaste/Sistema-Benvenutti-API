@@ -110,7 +110,7 @@ class ProgramaService
             escapeshellarg($caminho)
         );
 
-        exec($comando, $output, $resultCode);
+        \exec($comando, $output, $resultCode);
 
         if ($resultCode !== 0) {
             throw new \Exception('Erro ao gerar o backup: ' . implode("\n", $output));
