@@ -182,7 +182,7 @@ class ProgramaController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Programa resetado com sucesso.',
-            ]);
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
