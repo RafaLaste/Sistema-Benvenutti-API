@@ -58,7 +58,7 @@ class ProgramaController extends Controller
                 ];
             })
             ->sortByDesc('pontos')
-            ->take(10)
+            ->take(20)
             ->values()
             ->map(function ($usuario, $index) {
                 $usuario['posicao'] = $index + 1;
@@ -170,6 +170,23 @@ class ProgramaController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erro inesperado ao processar a solicitação.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function resetarPrograma()
+    {
+        try {
+            $this->programaService->resetarPrograma();
+            return response()->json([
+                'success' => true,
+                'message' => 'Programa resetado com sucesso.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao resetar o programa.',
                 'error'   => $e->getMessage()
             ], 500);
         }

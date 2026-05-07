@@ -52,7 +52,6 @@ $router->group(['prefix' => '/painel', 'middleware' => 'participante'], function
     $router->get('/programa', 'ProgramaController');
 
     $router->get('/edicoes', 'EdicoesController');
-    $router->get('/slides', 'SlidesController');
 });
 
 $router->group(['prefix' => '/manager'], function () use ($router) {
@@ -66,6 +65,7 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
             $router->get('/stats', 'Manager\ProgramaController@getStats');
             $router->get('/', 'Manager\ProgramaController@getData');
             $router->post('/atualizar', 'Manager\ProgramaController@postData');
+            $router->post('/resetar', 'Manager\ProgramaController@resetarPrograma');
         });
 
         $router->get('/participantes', 'Manager\ParticipantesController@getParticipantes');
@@ -99,17 +99,7 @@ $router->group(['prefix' => '/manager'], function () use ($router) {
             $router->put('/fotos/visibilidade/{idFoto}', 'Manager\FotosController@visibleFoto');
             $router->delete('/fotos/excluir/{idFoto}', 'Manager\FotosController@deleteFoto');
         });
-
-        $router->group(['prefix' => '/slides'], function () use ($router) {
-            $router->get('/', 'Manager\SlidesController@getSlides');
-            $router->get('/{id}', 'Manager\SlidesController@getSlide');
-            $router->post('/novo', 'Manager\SlidesController@createSlide');
-            $router->post('/atualizar/{id}', 'Manager\SlidesController@updateSlide');
-            $router->put('/ordenar', 'Manager\SlidesController@orderSlides');
-            $router->put('/visibilidade/{id}', 'Manager\SlidesController@visibleSlide');
-            $router->delete('/excluir/{id}', 'Manager\SlidesController@deleteSlide');
-        });
-
+        
         $router->get('/usuarios', 'Manager\UsuariosController@getUsuarios');
         $router->post('/usuarios/novo', 'Manager\UsuariosController@createUsuario');
         $router->get('/usuarios/{id}', 'Manager\UsuariosController@getUsuario');
