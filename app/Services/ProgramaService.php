@@ -82,6 +82,7 @@ class ProgramaService
 
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             DB::table('pontos')->truncate();
+            DB::table('usuarios_logs')->truncate();
             DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
             return true;
