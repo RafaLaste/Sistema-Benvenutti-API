@@ -33,6 +33,7 @@ class PontoService
                 'quantidade' => $dadosPonto['quantidade'],
                 'descricao' => $dadosPonto['descricao'] ?? null,
                 'tipo' => $tipo,
+                'categoria' => $dadosPonto['categoria'] ?? null,
                 'participante_id' => $participante->id,
             ]);
 
