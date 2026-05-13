@@ -222,7 +222,8 @@ class ParticipantesController extends Controller
                     'quantidade' => $ponto->quantidade,
                     'tipo' => $ponto->tipo,
                     'descricao' => $ponto->descricao,
-                    'data' => $ponto->criado->format('d-m-Y')
+                    'data' => $ponto->criado->format('d-m-Y'),
+                    'categoria' => $ponto->categoria === 'midia' ? 'mídia' : 'venda'
                 ];
             })
         ];
