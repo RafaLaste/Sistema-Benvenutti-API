@@ -76,7 +76,8 @@ class PontosController extends Controller
 
         $this->validate($request, [
             'quantidade' => 'required|numeric|min:0|max:2000000',
-            'descricao' => 'nullable'
+            'descricao' => 'nullable',
+            'categoria' => 'nullable'
         ], [
             'quantidade.required' => 'Por favor, informe a quantidade de pontos.',
             'quantidade.numeric' => 'A quantidade precisa ser um número.',
@@ -84,7 +85,7 @@ class PontosController extends Controller
             'quantidade.max' => 'A quantidade não pode ser maior que 2 milhões.',
         ]);
 
-        $dadosPonto = $request->only(['quantidade', 'descricao']);
+        $dadosPonto = $request->only(['quantidade', 'descricao', 'categoria']);
 
         try {
             $response = $this->pontoService->atualizarPonto($dadosPonto, $id);

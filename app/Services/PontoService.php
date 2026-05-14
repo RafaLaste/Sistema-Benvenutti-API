@@ -65,6 +65,7 @@ class PontoService
             $ponto->update([
                 'quantidade' => $dadosPonto['quantidade'],
                 'descricao' => $dadosPonto['descricao'] ?? null,
+                'categoria' => $dadosPonto['categoria'] ?? null,
             ]);
 
             DB::commit();
